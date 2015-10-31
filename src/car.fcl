@@ -1,0 +1,67 @@
+FUNCTION_BLOCK
+
+VAR_INPUT
+odleglosc : REAL;
+przesuniecie : REAL;
+END_VAR
+
+VAR_OUTPUT
+zmiana_kierunku : REAL;
+END_VAR
+
+FUZZIFY odleglosc
+TERM bardzoBlisko := (0, 1) (25, 1) (50, 0);
+TERM blisko := (25, 0) (50, 1) (125, 0);
+TERM daleko := (75, 0) (150, 1) (175, 0);
+TERM bardzoDaleko := (150, 0) (175, 1) (200, 1);
+END_FUZZIFY
+
+FUZZIFY przesuniecie
+TERM bardzoLewo := (-100, 1) (-75, 1) (-50, 0);
+TERM lewo := (-75, 0) (-10, 1) (-5, 0);
+TERM naWprost := (-10, 0) (-5, 1) (5, 1) (10, 0);
+TERM prawo := (5, 0) (10, 1) (75, 0);
+TERM bardzoPrawo := (50, 0) (75, 1) (100, 1);
+END_FUZZIFY
+
+DEFUZZIFY zmiana_kierunku
+TERM lewo := (-10, 1) (-5, 1) (0, 0);
+TERM prosto := (-5, 0) (0, 1) (5, 0);
+TERM prawo := (0, 0) (5, 1) (10, 1);
+METHOD : COG;
+DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK first
+AND: MIN;
+ACT: MIN;
+
+ RULE 0: IF odleglosc IS bardzoBlisko    AND przesuniecie IS bardzoLewo THEN zmiana_kierunku IS prosto;
+ RULE 1: IF odleglosc IS blisko          AND przesuniecie IS bardzoLewo THEN zmiana_kierunku IS prosto;
+ RULE 2: IF odleglosc IS daleko          AND przesuniecie IS bardzoLewo THEN zmiana_kierunku IS prosto;
+ RULE 3: IF odleglosc IS bardzoDaleko    AND przesuniecie IS bardzoLewo THEN zmiana_kierunku IS prosto;
+
+ RULE 4: IF odleglosc IS bardzoBlisko    AND przesuniecie IS lewo THEN zmiana_kierunku IS prawo;
+ RULE 5: IF odleglosc IS blisko          AND przesuniecie IS lewo THEN zmiana_kierunku IS prawo;
+ RULE 6: IF odleglosc IS daleko          AND przesuniecie IS lewo THEN zmiana_kierunku IS prosto;
+ RULE 7: IF odleglosc IS bardzoDaleko    AND przesuniecie IS lewo THEN zmiana_kierunku IS prosto;
+
+ RULE 8: IF odleglosc IS bardzoBlisko    AND przesuniecie IS naWprost THEN zmiana_kierunku IS prawo;
+ RULE 9: IF odleglosc IS blisko          AND przesuniecie IS naWprost THEN zmiana_kierunku IS prawo;
+RULE 10: IF odleglosc IS daleko          AND przesuniecie IS naWprost THEN zmiana_kierunku IS prawo;
+RULE 11: IF odleglosc IS bardzoDaleko    AND przesuniecie IS naWprost THEN zmiana_kierunku IS prosto;
+
+RULE 12: IF odleglosc IS bardzoBlisko    AND przesuniecie IS prawo THEN zmiana_kierunku IS lewo;
+RULE 13: IF odleglosc IS blisko          AND przesuniecie IS prawo THEN zmiana_kierunku IS lewo;
+RULE 14: IF odleglosc IS daleko          AND przesuniecie IS prawo THEN zmiana_kierunku IS prosto;
+RULE 15: IF odleglosc IS bardzoDaleko    AND przesuniecie IS prawo THEN zmiana_kierunku IS prosto;
+
+RULE 16: IF odleglosc IS bardzoBlisko    AND przesuniecie IS bardzoPrawo THEN zmiana_kierunku IS prosto;
+RULE 17: IF odleglosc IS blisko          AND przesuniecie IS bardzoPrawo THEN zmiana_kierunku IS prosto;
+RULE 18: IF odleglosc IS daleko          AND przesuniecie IS bardzoPrawo THEN zmiana_kierunku IS prosto;
+RULE 19: IF odleglosc IS bardzoDaleko    AND przesuniecie IS bardzoPrawo THEN zmiana_kierunku IS prosto;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
